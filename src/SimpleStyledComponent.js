@@ -54,7 +54,7 @@ const genClass = (len = 10) => {
   let genStr = "";
   let chosenStrings = strings;
   for (let i = 0; i < len; i++) {
-    if (len === 5) {
+    if (i === 5) {
       chosenStrings = characters;
       genStr += "_";
       continue;
