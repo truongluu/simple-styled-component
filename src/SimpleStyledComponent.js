@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 
 const StyledBaseContext = React.createContext();
 
-const SimpleStyledProvider = ({ children, props = {} }) => {
+const SimpleStyledProvider = ({ children, ...restProps }) => {
   return (
-    <StyledBaseContext.Provider value={{ ...props }}>
-      {{ children }}
+    <StyledBaseContext.Provider value={{ ...restProps }}>
+      {children}
     </StyledBaseContext.Provider>
   );
 };
@@ -14,12 +14,10 @@ const useStyledContext = () => useContext(StyledBaseContext);
 
 const withStyled = (Component) => {
   const ButtonWithStyled = function (props) {
-    console.log("props outside consumer", props);
     return (
       <StyledBaseContext.Consumer>
         {(propsFromStyledProvider) => {
-          console.log("props inside consumer", propsFromStyledProvider);
-          return <Component {...props} {...propsFromStyledProvider} />;
+          return <Component {...propsFromStyledProvider} {...props} />;
         }}
       </StyledBaseContext.Consumer>
     );
@@ -27,10 +25,7 @@ const withStyled = (Component) => {
   return ButtonWithStyled;
 };
 
-function StyledBase(strings, restExp) {
-  const props = {
-    theme: { textColor: "#fff", bgColor: "#000", fontStyle: "italic" }
-  };
+function StyledBase(strings, restExp, props = {}) {
   if (restExp.length) {
     let chosenArr = restExp;
     if (restExp.length < strings.length) {
@@ -68,15 +63,18 @@ const genClass = (len = 10) => {
 
 StyledBase.Button = (strings, ...restProps) => {
   const buttonClass = genClass(15);
-  const stylesRender = StyledBase(strings, restProps);
 
-  const stylesString = `\
+  const ButtonRender = ({ children, ...buttonRestProps }) => {
+    const styledProps = useContext(SimpleStyledProvider);
+    const stylesRender = StyledBase(strings, restProps, {
+      ...styledProps,
+      ...buttonRestProps
+    });
+    const stylesString = `\
   .${buttonClass}{\
     ${stylesRender}
   }\
 `;
-
-  const ButtonRender = ({ children, ...buttonRestProps }) => {
     return (
       <>
         <style>{stylesString}</style>
@@ -92,9 +90,11 @@ StyledBase.Button = (strings, ...restProps) => {
   return withStyled(ButtonRender);
 };
 
-StyledBase.Input = ({ children }) => {
-  const renderHtml = <input />;
-  return renderHtml;
+StyledBase.Input = (strings, ...restProps) => {
+  const inputRender = ({ children, ...inputProps }) => {
+    return <input {...inputProps} />;
+  };
+  return inputRender;
 };
 
 export { SimpleStyledProvider, useStyledContext, StyledBase as default };
