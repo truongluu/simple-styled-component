@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { merge } from "lodash";
 
 const StyledBaseContext = React.createContext();
 
@@ -14,11 +15,7 @@ const useStyledContext = () => useContext(StyledBaseContext);
 
 function StyledBase(strings, restExp, props = {}) {
   if (restExp.length) {
-    let chosenArr = restExp;
-    if (restExp.length < strings.length) {
-      chosenArr = strings;
-    }
-    const processString = chosenArr.map((item, index) => {
+    const processString = strings.map((item, index) => {
       if (restExp[index] && typeof restExp[index] === "function") {
         return strings[index] + restExp[index](props);
       }
@@ -53,10 +50,11 @@ StyledBase.Button = (strings, ...restProps) => {
 
   const ButtonRender = ({ children, ...buttonRestProps }) => {
     const styledProps = useContext(StyledBaseContext);
-    const stylesRender = StyledBase(strings, restProps, {
-      ...styledProps,
-      ...buttonRestProps
-    });
+    const stylesRender = StyledBase(
+      strings,
+      restProps,
+      merge(styledProps, buttonRestProps)
+    );
     const stylesString = `\
   .${buttonClass}{\
     ${stylesRender}

@@ -5,9 +5,10 @@ import SimpleStyledComponent, {
 import "./styles.css";
 
 const SimpleButton = SimpleStyledComponent.Button`
+  font-weight: bold;
   color: ${(props) => props.theme?.textColor};
-  border: 1px solid red;
-  font-style: italic;
+  font-size: ${(props) => props.theme?.fontSize};
+  font-weight: ${(props) => props.theme?.fontWeight}
 `;
 
 const SimpleInput = SimpleStyledComponent.Input`
@@ -15,11 +16,13 @@ const SimpleInput = SimpleStyledComponent.Input`
 
 export default function App() {
   return (
-    <SimpleStyledProvider theme={{ textColor: "blue" }}>
+    <SimpleStyledProvider
+      theme={{ textColor: "blue", fontSize: "30px", fontWeight: "bold" }}
+    >
       <div className="App">
         <h1>Hello CodeSandbox</h1>
         <h2>Start editing to see some magic happen!</h2>
-        <SimpleButton theme={{ textColor: "red" }} onClick={() => alert(1)}>
+        <SimpleButton theme={{ fontSize: "30px" }} onClick={() => alert(1)}>
           Hello fff
         </SimpleButton>
         <br />
