@@ -12,19 +12,6 @@ const SimpleStyledProvider = ({ children, ...restProps }) => {
 
 const useStyledContext = () => useContext(StyledBaseContext);
 
-const withStyled = (Component) => {
-  const ButtonWithStyled = function (props) {
-    return (
-      <StyledBaseContext.Consumer>
-        {(propsFromStyledProvider) => {
-          return <Component {...propsFromStyledProvider} {...props} />;
-        }}
-      </StyledBaseContext.Consumer>
-    );
-  };
-  return ButtonWithStyled;
-};
-
 function StyledBase(strings, restExp, props = {}) {
   if (restExp.length) {
     let chosenArr = restExp;
@@ -65,7 +52,7 @@ StyledBase.Button = (strings, ...restProps) => {
   const buttonClass = genClass(15);
 
   const ButtonRender = ({ children, ...buttonRestProps }) => {
-    const styledProps = useContext(SimpleStyledProvider);
+    const styledProps = useContext(StyledBaseContext);
     const stylesRender = StyledBase(strings, restProps, {
       ...styledProps,
       ...buttonRestProps
@@ -87,7 +74,7 @@ StyledBase.Button = (strings, ...restProps) => {
   ButtonRender.defaultProps = {
     children: "button"
   };
-  return withStyled(ButtonRender);
+  return ButtonRender;
 };
 
 StyledBase.Input = (strings, ...restProps) => {
